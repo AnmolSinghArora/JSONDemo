@@ -17,7 +17,15 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Async allows to run code in background i.e. different thread
+     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        DownloadTask task = new DownloadTask();
+        task.execute("api.openweathermap.org/data/2.5/weather?q=London");
+    }
+
     public class DownloadTask extends AsyncTask<String , Void , String>{
 
         @Override
@@ -50,39 +58,25 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 JSONObject jsonObject = new JSONObject(result);
+                
                 String weatherInfo = jsonObject.getString("weather");
-                //Log.i("Weather content", weatherInfo);
+                
+                Log.i("Weather content", weatherInfo);
+                
                 JSONArray arr = new JSONArray(weatherInfo);
+                
                 for (int i = 0; i < arr.length(); i++) {
+                    
                     JSONObject jsonPart = arr.getJSONObject(i);
+                    
                     Log.i("main", jsonPart.getString("main"));
                     Log.i("description", jsonPart.getString("description"));
+                    
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        DownloadTask task = new DownloadTask();
-
-        //String result = task.execute(" ").get();
-        AsyncTask<String, Void, String> result = null;
-        try {
-            result = task.execute("api.openweathermap.org/data/2.5/weather?q=London");
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-
     }
 }
