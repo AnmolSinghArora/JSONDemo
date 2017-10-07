@@ -18,74 +18,46 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity {
 
     //Async allows to run code in background i.e. different thread
-    public class DownloadTask extends AsyncTask<String, Void, String>{
-
+    public class DownloadTask extends AsyncTask<String , Void , String>{
 
         @Override
-        protected String doInBackground(String... urls){ //Varargs and not an array//
-
-            String result="";
+        protected String doInBackground(String... urls) {
+            String result= "";
             URL url;
-            HttpURLConnection urlConnection = null; // kind of like a browser
+            HttpURLConnection urlConnection = null;
 
-            try{
-
+            try {
                 url = new URL(urls[0]);
-
-                urlConnection = (HttpURLConnection) url.openConnection();//Like opening browser window
-
-                InputStream in = urlConnection.getInputStream(); //stream to hold input of data as it comes in
-
+                urlConnection = (HttpURLConnection)url.openConnection();
+                InputStream in = urlConnection.getInputStream();
                 InputStreamReader reader = new InputStreamReader(in);
-
-                int data = reader.read(); // reads contents of url
-
-                while(data != -1){ // data loops through all characters
-
+                int data = reader.read();
+                while(data != -1){
                     char current = (char) data;
-
                     result += current;
-
                     data = reader.read();
-
                 }
-
                 return result;
-
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            catch(Exception e){
-
-
-                e.printStackTrace(); // to give error details like not proper address
-
-                return "Failed";
-            }
-
-
+            return null;
         }
-
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
             try {
+
                 JSONObject jsonObject = new JSONObject(result);
-
                 String weatherInfo = jsonObject.getString("weather");
-
-                Log.i("Weather Content", weatherInfo);
-
+                //Log.i("Weather content", weatherInfo);
                 JSONArray arr = new JSONArray(weatherInfo);
-
-                for(int i=0; i<arr.length(); i++){
-
+                for (int i = 0; i < arr.length(); i++) {
                     JSONObject jsonPart = arr.getJSONObject(i);
-
                     Log.i("main", jsonPart.getString("main"));
                     Log.i("description", jsonPart.getString("description"));
-
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -104,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         //String result = task.execute(" ").get();
         AsyncTask<String, Void, String> result = null;
         try {
-            result = task.execute("api.openweathermap.org/data/2.5/weather?q=London,uk");
+            result = task.execute("api.openweathermap.org/data/2.5/weather?q=London");
         } catch (Exception e) {
 
             e.printStackTrace();
